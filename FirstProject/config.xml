@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Companies>
+	<Company Name="Microsoft">
+		<Employees>228000</Employees>
+	</Company>
+	<Company Name="Apple">
+		<Employees>161000</Employees>
+	</Company>
+	<Company Name="Google">
+		<Employees>182502</Employees>
+	</Company>
+</Companies>

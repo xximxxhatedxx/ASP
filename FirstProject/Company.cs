@@ -1,15 +1,15 @@
 ﻿public class Company
 {
-    public int ID { get; set; }
     public string Name { get; set; }
+    public int Employees { get; set; }
 
-    public Company(int id, string name) {
-        ID = id;
+    public Company(string name, int employees) {
         Name = name;
+        Employees = employees;
     }
 
     public override string ToString()
     {
-        return $"( {ID} - {Name} )";
+        return $"( {Name} - {Employees} )";
     }
 }

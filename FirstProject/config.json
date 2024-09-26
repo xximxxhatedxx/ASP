@@ -1,0 +1,20 @@
+{
+  "Companies": {
+    "Microsoft": {
+      "Name": "Microsoft",
+      "Employees": 228000
+    },
+    "Apple": {
+      "Name": "Apple",
+      "Employees": 161000
+    },
+    "Google": {
+      "Name": "Google",
+      "Employees": 182502
+    }
+  },
+  "Person": {
+    "Name": "Nazarov Vladyslav",
+    "Age": 19
+  }
+}
