@@ -1,24 +1,16 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration
-    .AddJsonFile("config.json")
-    .AddXmlFile("config.xml")
-    .AddIniFile("config.ini");
-
-builder.Services.AddSingleton<ICompanyAnalyzer, CompanyAnalyzer>();
+builder.Services.AddTransient<CalcService>();
+builder.Services.AddTransient<TimeService>();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
-var person = app.Configuration.GetSection("Person").Get<Person>();
+app.UseRouting();
 
-app.MapGet("/", async (ICompanyAnalyzer companyAnalyzer, HttpResponse response) =>
+app.UseEndpoints(endpoints =>
 {
-    var companies = companyAnalyzer.GetCompanies();
-    var winner = companyAnalyzer.GetCompanyMWP(companies);
-
-    await response.WriteAsync($"My information : {person}\n");
-    await response.WriteAsync($"Most employees: {winner}\n");
-    foreach (var company in companies) await response.WriteAsync(company.ToString());
+    endpoints.MapControllers();
 });
 
 app.Run();
