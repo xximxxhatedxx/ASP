@@ -11,7 +11,7 @@ public class TimeController : ControllerBase
         _timeAnalysisService = timeAnalysisService;
     }
 
-    [HttpGet("currenttime")]
+    [HttpGet]
     public IActionResult GetCurrentTimePeriod()
     {
         return Ok(_timeAnalysisService.GetCurrentTimePeriod());

@@ -1,0 +1,24 @@
+{
+  "Books": [
+    {
+      "id": 1,
+      "name": "His Last Lie",
+      "author": "Eric Therme"
+    },
+    {
+      "id": 2,
+      "name": "The Visitor",
+      "author": "Graham Wilson"
+    },
+    {
+      "id": 3,
+      "name": "Time To Die",
+      "author": "Alex Robert"
+    },
+    {
+      "id": 4,
+      "name": "Mozzarella Murder",
+      "author": "R.M. Murphy"
+    }
+  ]
+}
