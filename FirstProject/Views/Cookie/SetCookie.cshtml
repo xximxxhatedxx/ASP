@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Title"] = "Set Cookie";
+}
+
+<h2>Set Cookie</h2>
+
+<form method="post">
+    <div>
+        <label for="value">Value:</label>
+        <input type="text" id="value" name="value" required />
+    </div>
+    <div>
+        <label for="expiryDate">Expiration Date:</label>
+        <input type="datetime-local" id="expiryDate" name="expiryDate" required />
+    </div>
+    <button type="submit">Submit</button>
+</form>
+
+@if (TempData["Message"] != null)
+{
+    <p>@TempData["Message"]</p>
+}

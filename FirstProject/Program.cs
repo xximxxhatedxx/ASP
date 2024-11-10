@@ -1,15 +1,19 @@
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddTransient<CalcService>();
-builder.Services.AddTransient<TimeService>();
-builder.Configuration
-    .AddJsonFile("books.json")
-    .AddJsonFile("users.json");
-builder.Services.AddControllers();
+builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+app.UseMiddleware<ExceptionLogger>();
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
-app.MapControllers();
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Cookie}/{action=SetCookie}/{id?}");
+
 
 app.Run();
