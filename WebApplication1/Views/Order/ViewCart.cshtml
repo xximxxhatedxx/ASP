@@ -1,0 +1,30 @@
+﻿@model List<Product>
+@{
+    var user = ViewBag.User as User;
+}
+
+<h2>Корзина</h2>
+
+<p>Привіт, @user.Name! Ваше замовлення:</p>
+
+@if (!Model.Any())
+{
+    <p>Корзина порожня.</p>
+}
+else
+{
+    <ul>
+        @foreach (var product in Model)
+        {
+            <li>
+                <strong>@product.Name</strong> - @product.Quantity шт. - @product.Price грн за одиницю
+            </li>
+        }
+    </ul>
+
+    <p><strong>Загальна вартість: @Model.Sum(p => p.Price * p.Quantity) грн</strong></p>
+}
+
+<form method="post" action="@Url.Action("PlaceOrder", "Order", new { name = user.Name })">
+    <button type="submit">Підтвердити замовлення</button>
+</form>

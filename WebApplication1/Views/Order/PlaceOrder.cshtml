@@ -1,0 +1,21 @@
+﻿@model List<Product>
+
+<h2>Ваше замовлення</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <p>Ваша корзина пуста.</p>
+}
+else
+{
+    <ul>
+        @foreach (var product in Model)
+        {
+            <li>
+                <strong>@product.Name</strong> - @product.Quantity шт. - @product.Price грн
+            </li>
+        }
+    </ul>
+
+    <p><strong>Загальна вартість: @Model.Sum(p => p.Price * p.Quantity) грн</strong></p>
+}
