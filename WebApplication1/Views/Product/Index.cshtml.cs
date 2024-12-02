@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace FirstProject.Views.Order
+namespace WebApplication1.Views.Product
 {
-    public class RegisterModel : PageModel
+    public class IndexModel : PageModel
     {
         public void OnGet()
         {
