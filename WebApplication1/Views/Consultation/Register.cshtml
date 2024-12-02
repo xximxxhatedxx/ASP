@@ -1,0 +1,39 @@
+﻿@model ConsultationFormModel
+
+<form asp-action="Register" method="post">
+    <div>
+        <label>Ім'я прізвище:</label>
+        <input asp-for="FullName" />
+        <span asp-validation-for="FullName" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label>Email:</label>
+        <input asp-for="Email" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label>Бажана дата консультації:</label>
+        <input asp-for="ConsultationDate" type="date" />
+        <span asp-validation-for="ConsultationDate" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label>Продукт:</label>
+        <select asp-for="Product">
+            <option value="">Оберіть продукт</option>
+            @foreach (var product in ViewBag.Products as string[])
+            {
+                <option value="@product">@product</option>
+            }
+        </select>
+        <span asp-validation-for="Product" class="text-danger"></span>
+    </div>
+
+    <button type="submit">Зареєструватися</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
