@@ -1,5 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpClient<WeatherService>();
+builder.Services.AddScoped<WeatherService>();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -17,7 +19,11 @@ app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Order}/{action=Register}/{id?}");
+    pattern: "{controller=Product}/{action=Index}/{id?}");
 
+app.MapControllerRoute(
+    name: "weather",
+    pattern: "Weather",
+    defaults: new { controller = "Weather", action = "Index" });
 
 app.Run();

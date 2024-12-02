@@ -13,16 +13,17 @@ public class WeatherService
         _httpClient = httpClient;
     }
 
-    public async Task<WeatherInfo> GetWeatherAsync(string city)
+    public async Task<WeatherModel> GetWeatherAsync(string city)
     {
         var response = await _httpClient.GetStringAsync($"{BaseUrl}?q={city}&appid={ApiKey}&units=metric");
         var data = JsonConvert.DeserializeObject<dynamic>(response);
 
-        return new WeatherInfo
+        return new WeatherModel
         {
             City = city,
             Temperature = data.main.temp,
-            Description = data.weather[0].description
+            Description = data.weather[0].description,
+            WindSpeed = data.wind.speed,
         };
     }
 }
