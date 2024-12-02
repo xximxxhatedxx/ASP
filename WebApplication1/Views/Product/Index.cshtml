@@ -1,35 +1,5 @@
-﻿@model IEnumerable<WebApplication1.Models.Product>
+﻿@model IEnumerable<Product>
 
-<h2>Product List</h2>
+<h1>Products List</h1>
 
-<ul>
-    @foreach (var product in Model)
-    {
-        <li>
-            @product.ID. @product.Name - $@product.Price (Created on: @product.CreatedDate.ToShortDateString())
-        </li>
-    }
-</ul>
-
-<h2>Product Table</h2>
-<table style="width:100%; border: 1px solid black;">
-    <thead>
-        <tr style="width:100%; border: 1px solid black; border-collapse:collapse;">
-            <th>ID</th>
-            <th>Name</th>
-            <th>Price ($)</th>
-            <th>Created Date</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var product in Model)
-        {
-            <tr>
-                <td>@product.ID</td>
-                <td>@product.Name</td>
-                <td>@product.Price</td>
-                <td>@product.CreatedDate.ToShortDateString()</td>
-            </tr>
-        }
-    </tbody>
-</table>
+@await Html.PartialAsync("ProductTable", Model)
