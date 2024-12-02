@@ -7,7 +7,11 @@ builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
 });
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<LogActionFilter>();
+    options.Filters.Add<UniqueUserFilter>();
+});
 
 var app = builder.Build();
 
