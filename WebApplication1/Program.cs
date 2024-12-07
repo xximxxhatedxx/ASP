@@ -1,43 +1,42 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging.Console;
+using Serilog;
+using Serilog.Exceptions;
+using Serilog.Sinks.Email;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=WebApplication1Db;Trusted_Connection=True;"));
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .Enrich.WithExceptionDetails()
+    .WriteTo.Console() 
+    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Minute)
+    .WriteTo.Email(
+        from: "dhficienfnicjendhcudb@gmail.com",
+        to: "dhficienfnicjendhcudb@gmail.com",
+        host: "smtp.gmail.com",
+        port: 587,
+        connectionSecurity: MailKit.Security.SecureSocketOptions.StartTls,
+        credentials: new NetworkCredential(
+          "dhficienfnicjendhcudb@gmail.com", "pbhy dqxj licx amil"))
+    .Destructure.ByTransforming<Exception>(e => new { e.Message, e.StackTrace })
+    .CreateLogger();
 
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
-});
+builder.Host.UseSerilog();
 
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.EnsureCreated();
-
-    DbInitializer.Initialize(context);
-
-    Console.WriteLine("Список користувачів:");
-    foreach (var user in context.Users)
-    {
-        Console.WriteLine($"Id: {user.Id}, Ім'я: {user.FirstName}, Призвіще: {user.LastName}, Вік: {user.Age}");
-    }
-}
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-app.UseAuthorization();
-app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Company}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
