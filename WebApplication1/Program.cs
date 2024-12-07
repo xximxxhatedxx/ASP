@@ -1,42 +1,71 @@
-using Serilog;
-using Serilog.Exceptions;
-using Serilog.Sinks.Email;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using System.Net;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
+using System.Diagnostics;
+using OpenTelemetry;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
-    .Enrich.WithExceptionDetails()
-    .WriteTo.Console() 
-    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Minute)
-    .WriteTo.Email(
-        from: "dhficienfnicjendhcudb@gmail.com",
-        to: "dhficienfnicjendhcudb@gmail.com",
-        host: "smtp.gmail.com",
-        port: 587,
-        connectionSecurity: MailKit.Security.SecureSocketOptions.StartTls,
-        credentials: new NetworkCredential(
-          "dhficienfnicjendhcudb@gmail.com", "pbhy dqxj licx amil"))
-    .Destructure.ByTransforming<Exception>(e => new { e.Message, e.StackTrace })
-    .CreateLogger();
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracerProviderBuilder =>
+    {
+        tracerProviderBuilder
+            .AddSource(DiagnosticsConfig.ServiceName)
+            .SetResourceBuilder(
+                ResourceBuilder.CreateDefault()
+                    .AddService(DiagnosticsConfig.ServiceName, serviceVersion: "1.0.0")
+                    .AddAttributes(new Dictionary<string, object>
+                    {
+                        ["environment"] = "production",
+                        ["service.instance.id"] = Environment.MachineName,
+                    }))
+            .AddAspNetCoreInstrumentation(options =>
+            {
+                options.Filter = (req) =>
+                {
+                    return !req.Request.Path.StartsWithSegments("/health")
+                           && !req.Request.Path.StartsWithSegments("/metrics");
+                };
 
-builder.Host.UseSerilog();
+                options.EnrichWithHttpRequest = (activity, request) =>
+                {
+                    activity.SetTag("custom.request.header",
+                        request.Headers["custom-header"]);
+                };
+            })
+            .AddOtlpExporter(opts =>
+            {
+                opts.Endpoint = new Uri("http://localhost:4317");
+            })
+            .AddConsoleExporter();
+    })
+    .WithMetrics(metricsProviderBuilder =>
+    {
+        metricsProviderBuilder
+            .AddMeter(DiagnosticsConfig.ServiceName)
+            .AddAspNetCoreInstrumentation()
+            .AddOtlpExporter(opts =>
+            {
+                opts.Endpoint = new Uri("http://localhost:4317");
+            });
+    });
 
-builder.Services.AddControllersWithViews();
+var app = builder.Build();                 
 
-var app = builder.Build();
+app.MapGet("/", async (ILogger<Program> logger) =>
+{
+    using var activity = DiagnosticsConfig.ActivitySource.StartActivity("HomeRequest");
+    activity?.SetTag("custom.tag", "example");
 
-app.UseSerilogRequestLogging();
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    logger.LogInformation("Processing home request");
+    await Task.Delay(Random.Shared.Next(100, 1000));
+    return "Hello from OpenTelemetry enabled service!";
+});
 
 app.Run();
+
+public static class DiagnosticsConfig
+{
+    public const string ServiceName = "MyService";
+    public static readonly ActivitySource ActivitySource = new(ServiceName);
+}

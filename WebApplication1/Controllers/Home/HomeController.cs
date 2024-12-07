@@ -1,30 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Serilog;
+using OpenTelemetry.Trace;
 
 public class HomeController : Controller
 {
-    public IActionResult Index()
-    {
-        Log.Information("Application started at {Time}", DateTime.Now);
-        Log.Debug("Debug message");
-        Log.Warning("This is a warning message");
-        Log.Error("An error occurred at {Time}", DateTime.Now);
-        Log.Fatal("Fatal error: {ErrorDetails}", "OutOfMemory");
+    private readonly Tracer _tracer;
 
-        return View();
+    public HomeController(TracerProvider tracerProvider)
+    {
+        _tracer = tracerProvider.GetTracer("example-tracer");
     }
 
-    public IActionResult Error()
+    public IActionResult Index()
     {
-        try
+        using (var span = _tracer.StartActiveSpan("IndexRequest"))
         {
-            throw new InvalidOperationException("An unexpected error occurred.");
+            span.SetAttribute("http.method", "GET");
+            span.SetAttribute("http.route", "/");
+            span.SetAttribute("user.id", 123);
+            span.AddEvent("Index page loaded");
         }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "An error occurred in the Error action at {Time}", DateTime.Now);
-        }
-
         return View();
     }
 }
