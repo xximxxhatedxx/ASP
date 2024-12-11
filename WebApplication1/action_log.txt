@@ -1,0 +1,4 @@
+Method: WebApplication1.Controllers.ProductController.Index (WebApplication1), Time: 2024-12-09 15:58:21
+Method: WebApplication1.Controllers.HomeController.Privacy (WebApplication1), Time: 2024-12-09 15:58:38
+Method: WebApplication1.Controllers.ProductController.Index (WebApplication1), Time: 2024-12-09 17:08:01
+Method: WebApplication1.Controllers.HomeController.Privacy (WebApplication1), Time: 2024-12-09 17:08:17
